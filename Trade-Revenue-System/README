@@ -1,0 +1,179 @@
+# International Trade Customs Management System
+A comprehensive blockchain-based system built on the Stacks blockchain for managing international trade customs declarations, duty calculations, payment processing, and goods clearance with automated compliance tracking and multi-stakeholder authorization controls.
+
+##  Features
+### Core Functionality
+- **Customs Declaration Management**: Submit and track international trade declarations
+- **Automated Duty Calculation**: Calculate customs duties based on goods category and value
+- **Payment Processing**: Process duty payments with blockchain verification
+- **Goods Clearance Authorization**: Multi-level approval system for customs clearance
+- **Business Activity Tracking**: Monitor import activities and statistics per business
+- **Audit Trail**: Complete transparency with immutable audit logs
+
+### Security & Validation
+- **Input Validation**: Comprehensive validation of all user inputs
+- **Access Control**: Role-based permissions for different stakeholders
+- **System Status Management**: Emergency system disable/enable capabilities
+- **Data Integrity**: Blockchain-backed immutable records
+
+##  Smart Contract Architecture
+### State Variables
+- `authorized-customs-officer`: Currently authorized customs officer
+- `current-declaration-counter`: Tracks declaration IDs
+- `system-operational-status`: System enable/disable flag
+- `total-processed-declarations`: Total system statistics
+- `total-collected-duties`: Cumulative duty collections
+
+### Core Data Structures
+#### Goods Category Configuration
+```clarity
+goods-category-duty-rates: {
+  duty-rate-in-basis-points: uint,
+  category-active-status: bool,
+  last-updated-block-height: uint,
+  category-description: string
+}
+```
+
+#### Trade Declaration Record
+```clarity
+international-trade-declarations: {
+  importing-business-principal: principal,
+  declared-goods-total-value: uint,
+  assigned-goods-category: string,
+  calculated-duty-obligation: uint,
+  payment-completion-status: bool,
+  customs-clearance-status: bool,
+  // ... additional tracking fields
+}
+```
+
+##  Prerequisites
+- Stacks blockchain development environment
+- Clarinet CLI tool
+- Node.js and npm (for testing)
+
+##  Getting Started
+### Installation
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd stacks-trade-revenue-system
+```
+2. Install dependencies:
+```bash
+npm install
+```
+3. Initialize Clarinet project (if not already done):
+```bash
+clarinet new trade-system
+```
+### Deployment
+
+1. Check contract syntax:
+```bash
+clarinet check
+```
+
+2. Deploy to testnet:
+```bash
+clarinet deploy --testnet
+```
+
+3. Deploy to mainnet:
+```bash
+clarinet deploy --mainnet
+```
+
+##  Usage Guide
+### Administrative Functions
+#### 1. Designate Customs Officer
+```clarity
+(contract-call? .trade-system designate-new-customs-officer 'SP1HTBVD3JG9C05J7HBJTHGR0GGW7KX17ECXR7PMWS)
+```
+
+#### 2. Configure Goods Categories
+```clarity
+(contract-call? .trade-system configure-goods-category-duty-rate 
+  "electronics" 
+  u500  ;; 5% duty rate
+  "Consumer electronic devices and accessories")
+```
+
+#### 3. System Management
+```clarity
+;; Temporarily disable system
+(contract-call? .trade-system temporarily-disable-system)
+
+;; Reactivate system
+(contract-call? .trade-system reactivate-system-operations)
+```
+### Business Operations
+#### 1. Submit Customs Declaration
+```clarity
+(contract-call? .trade-system submit-customs-declaration
+  u10000  ;; Goods value in microSTX
+  "electronics"  ;; Category
+  "Imported smartphones from manufacturer")
+```
+
+#### 2. Process Duty Payment
+```clarity
+(contract-call? .trade-system process-duty-payment u1)  ;; Declaration ID
+```
+
+#### 3. Authorize Goods Clearance (Customs Officer only)
+```clarity
+(contract-call? .trade-system authorize-goods-clearance 
+  u1  ;; Declaration ID
+  "Goods cleared after inspection")
+```
+
+### Query Functions
+
+#### Get Declaration Details
+```clarity
+(contract-call? .trade-system get-declaration-details u1)
+```
+
+#### Check Business Import Activity
+```clarity
+(contract-call? .trade-system get-business-import-activity 'SP1HTBVD3JG9C05J7HBJTHGR0GGW7KX17ECXR7PMWS)
+```
+
+#### Calculate Estimated Duty Cost
+```clarity
+(contract-call? .trade-system calculate-estimated-duty-cost u10000 "electronics")
+```
+
+##  Security Features
+### Access Control
+- **Contract Deployer**: Full administrative privileges
+- **Customs Officer**: Declaration processing and clearance authorization
+- **Business Users**: Declaration submission and payment processing
+
+### Input Validation
+- Principal address validation
+- String length constraints
+- Numeric range validation
+- Entity existence verification
+
+### Error Handling
+The system includes comprehensive error constants:
+- `ERR-UNAUTHORIZED-ACCESS (u100)`
+- `ERR-INVALID-PAYMENT-AMOUNT (u101)`
+- `ERR-DUTY-ALREADY-SETTLED (u102)`
+- `ERR-DECLARATION-NOT-FOUND (u103)`
+- And more...
+
+##  Pre-configured Goods Categories
+The system comes with pre-configured categories:
+
+| Category | Duty Rate | Description |
+|----------|-----------|-------------|
+| consumer-electronics | 5% | Consumer electronic devices |
+| textile-apparel | 10% | Clothing and fabrics |
+| industrial-machinery | 7.5% | Heavy machinery |
+| food-beverages | 2% | Food products and beverages |
+| chemical-pharmaceuticals | 3% | Chemical compounds and drugs |
+| automotive-parts | 6% | Vehicle parts and accessories |
